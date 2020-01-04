@@ -4,7 +4,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.tictactoegame.MainActivity;
+import com.example.tictactoegame.model.GameBoard;
 import com.example.tictactoegame.model.Player;
+
 
 public class GameBoardService {
 
@@ -41,31 +43,31 @@ public class GameBoardService {
 
     }
 
-    public void player1Wins(Player player1, MainActivity mainActivity, Button[][] buttons, Integer roundCount, Boolean player1Turn) {
+    public void player1Wins(Player player1, MainActivity mainActivity, Button[][] buttons, GameBoard gameBoard) {
         player1.setPoints(player1.getPoints() + 1);
         updatePlayer1PointsText(player1);
         Toast.makeText(mainActivity, "Player 1 wins!", Toast.LENGTH_SHORT).show();
-        resetBoard(buttons, roundCount, player1Turn);
+        resetBoard(buttons, gameBoard);
     }
 
-    public void player2Wins(Player player2, MainActivity mainActivity, Button[][] buttons, Integer roundCount, Boolean player1Turn) {
+    public void player2Wins(Player player2, MainActivity mainActivity, Button[][] buttons, GameBoard gameBoard) {
         player2.setPoints(player2.getPoints() + 1);
 
         Toast.makeText(mainActivity, "Player 2 wins!", Toast.LENGTH_SHORT).show();
         updatePlayer2PointsText(player2);
-        resetBoard(buttons, roundCount, player1Turn);
+        resetBoard(buttons, gameBoard);
     }
 
-    public void draw(MainActivity mainActivity, Button[][] buttons, Integer roundCount, Boolean player1Turn) {
+    public void draw(MainActivity mainActivity, Button[][] buttons, GameBoard gameBoard) {
         Toast.makeText(mainActivity, "Draw!", Toast.LENGTH_SHORT).show();
-        resetBoard(buttons, roundCount, player1Turn);
+        resetBoard(buttons, gameBoard);
     }
 
-    public void resetGame(Player player1, Player player2, Button[][] buttons, Integer roundCount, Boolean player1Turn) {
+    public void resetGame(Player player1, Player player2, Button[][] buttons, GameBoard gameBoard) {
         player1.setPoints(0);
         player2.setPoints(0);
         updatePointsText(player1, player2);
-        resetBoard(buttons, roundCount, player1Turn);
+        resetBoard(buttons, gameBoard);
     }
 
     private void updatePointsText(Player player1, Player player2) {
@@ -82,15 +84,15 @@ public class GameBoardService {
         player2.getTextView().setText("Player 2: " + player2.getPoints());
     }
 
-    private void resetBoard(Button[][] buttons, Integer roundCount, Boolean player1Turn) {
+    private void resetBoard(Button[][] buttons, GameBoard gameBoard) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 buttons[i][j].setText("");
             }
         }
 
-        roundCount = 0;
+        gameBoard.setRoundCount(0);
 
-        player1Turn = true;
+        gameBoard.setPlayer1Turn(true);
     }
 }

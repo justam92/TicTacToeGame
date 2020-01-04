@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tictactoegame.model.GameBoard;
 import com.example.tictactoegame.model.Player;
 import com.example.tictactoegame.service.GameBoardService;
 
@@ -17,13 +18,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button[][] buttons = new Button[3][3];
 
-    private Boolean player1Turn = true;
-
-    private Integer roundCount = 0;
-
     private Player player1 = new Player();
     private Player player2 = new Player();
 
+    private GameBoard gameBoard = new GameBoard();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameBoardService.resetGame(player1, player2, buttons, roundCount, player1Turn);
+                gameBoardService.resetGame(player1, player2, buttons, gameBoard);
             }
         });
     }
@@ -57,24 +55,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        if (player1Turn) {
+        if (gameBoard.getPlayer1Turn()){
             ((Button) v).setText("X");
         } else {
             ((Button) v).setText("O");
         }
 
-        roundCount++;
+        gameBoard.setRoundCount(gameBoard.getRoundCount() + 1);
 
         if (gameBoardService.checkForWin(buttons)) {
-            if (player1Turn) {
-                gameBoardService.player1Wins(player1, this, buttons, roundCount, player1Turn);
+            if (gameBoard.getPlayer1Turn()) {
+                gameBoardService.player1Wins(player1, this, buttons, gameBoard);
             } else {
-                gameBoardService.player2Wins(player2, this, buttons, roundCount, player1Turn);
+                gameBoardService.player2Wins(player2, this, buttons, gameBoard);
             }
-        } else if (roundCount == 9) {
-            gameBoardService.draw(this, buttons, roundCount, player1Turn);
+        } else if (gameBoard.getRoundCount().equals(9)) {
+            gameBoardService.draw(this, buttons, gameBoard);
         } else {
-            player1Turn = !player1Turn;
+            gameBoard.setPlayer1Turn(!gameBoard.getPlayer1Turn());
         }
 
     }
@@ -83,19 +81,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt("roundCount", roundCount);
+        outState.putInt("roundCount", gameBoard.getRoundCount());
         outState.putInt("player1Points", player1.getPoints());
         outState.putInt("player2Points", player2.getPoints());
-        outState.putBoolean("player1Turn", player1Turn);
+        outState.putBoolean("player1Turn", gameBoard.getPlayer1Turn());
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        roundCount = savedInstanceState.getInt("roundCount");
+        gameBoard.setRoundCount(savedInstanceState.getInt("roundCount"));
         player1.setPoints(savedInstanceState.getInt("player1Points"));
         player2.setPoints(savedInstanceState.getInt("player2Points"));
-        player1Turn = savedInstanceState.getBoolean("player1Turn");
+        gameBoard.setPlayer1Turn(savedInstanceState.getBoolean("player1Turn"));
     }
 }
